@@ -9,9 +9,10 @@ class Direction(enum.Enum):
 
 
 class Player:
-    MOVEMENT_SPEED = 6
-    TURNING_SPEED = Angle(1 / (8 * np.pi))
-    VIEWING_BOUNDS = PolarCoordinate(Angle(np.pi / 3), 200)
+    MOVEMENT_SPEED = 3
+    TURNING_SPEED = Angle(1 / (32 * np.pi))
+    """radius becomes radius * min(cell width, cell height) of maze, see Level.generate_obstacles"""
+    VIEWING_BOUNDS = PolarCoordinate(Angle(np.pi / 5), 1.5)
     COLOR = 'blue'
     BODY_RADIUS = 20
     FRUSTUM_COLOR = 'white'
@@ -88,12 +89,7 @@ class Player:
         :param other: polar coordinate to convert
         :return: corresponding position
         """
-        relative_position = Position(
-            other.radius * np.cos(other.angle.rad),
-            -other.radius * np.sin(other.angle.rad)
-        )
-
-        return self.position + relative_position
+        return self.position + other.to_cartesian()
 
     def direction_relative_to_player(self, point: PolarCoordinate) -> Direction:
         """

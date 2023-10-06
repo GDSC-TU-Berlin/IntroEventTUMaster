@@ -25,9 +25,9 @@ class Cell:
 
 
 class Level:
-    DEFAULT_MAZE_DIMENSIONS = (5, 5)
+    DEFAULT_MAZE_DIMENSIONS = (2, 2)
     TARGET_COLOR = 'gold'
-    TARGET_RADIUS = 15
+    TARGET_RADIUS = 30
 
     def __init__(self, width=DEFAULT_MAZE_DIMENSIONS[0], height=DEFAULT_MAZE_DIMENSIONS[1]):
         self.width = width
@@ -47,7 +47,7 @@ class Level:
     def generate_objects(self, screen_width, screen_height, obstacle_radius):
         cell_width = screen_width / self.width
         cell_height = screen_height / self.height
-        Player.VIEWING_BOUNDS.radius = min(cell_width, cell_height)
+        Player.VIEWING_BOUNDS.radius *= min(cell_width, cell_height)
 
         obstacles_per_horizontal_wall = int(cell_width / obstacle_radius)
         obstacles_per_vertical_wall = int(cell_height / obstacle_radius)
@@ -192,13 +192,15 @@ class Level:
                 right_cell.wall_left = False
                 self.recursive_dfs(*right_coords)
 
-    def get_cell_above(self, x, y):
+    @staticmethod
+    def get_cell_above(x, y):
         return (-1, -1) if y == 0 else (x, y - 1)
 
     def get_cell_below(self, x, y):
         return (-1, -1) if y == self.height - 1 else (x, y + 1)
 
-    def get_cell_left_of(self, x, y):
+    @staticmethod
+    def get_cell_left_of(x, y):
         return (-1, -1) if x == 0 else (x - 1, y)
 
     def get_cell_right_of(self, x, y):

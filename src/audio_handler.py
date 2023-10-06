@@ -18,7 +18,7 @@ class CMajorScale(Enum):
 
 @dataclass
 class Audio:
-    MAX_VOLUME = 1
+    MAX_VOLUME = .1
     C3_MAJOR_FREQUENCIES = {
         CMajorScale.C: 131,
         CMajorScale.D: 147,
@@ -107,6 +107,26 @@ class AudioHandler:
     @staticmethod
     def distance_to_volume(distance, max_distance):
         return (1 - distance / max_distance) * Audio.MAX_VOLUME
+
+    def play_completion_sound(self, player: Player):
+        self.set_volume(0.0, 0.0, 0.0)
+        self.set_target_volume(0.0)
+
+        sound = pygame.mixer.Sound("../assets/lvl_completed.mp3")
+        channel = sound.play()
+        while channel.get_busy():
+            pass
+        player.is_alive = False
+
+    def play_game_over_sound(self, player: Player):
+        self.set_volume(0.0, 0.0, 0.0)
+        self.set_target_volume(0.0)
+
+        sound = pygame.mixer.Sound("../assets/game_over.mp3")
+        channel = sound.play()
+        while channel.get_busy():
+            pass
+        player.is_alive = False
 
 
 def generate_sine_wave(frequency: int) -> np.ndarray:

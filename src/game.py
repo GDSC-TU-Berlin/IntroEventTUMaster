@@ -1,6 +1,4 @@
-import sys
 import pygame.draw
-
 import controls
 from audio_handler import AudioHandler
 from controls import handle_player_controls
@@ -14,7 +12,6 @@ class Game:
     SCREEN_HEIGHT = 800
     BACKGROUND_COLOR = 'black'
     FPS = 60
-    COLLISION_DISTANCE = 10
     TEXT_FONT = ('Mono', 20)
 
     def __init__(self):
@@ -123,10 +120,11 @@ class Game:
                 o.color = Obstacle.DEFAULT_COLOR_IN_SIGHT
 
                 """if the player collides with an obstacle, the game ends"""
-                if self.player.distance_to(o.position) < Game.COLLISION_DISTANCE:
+                if self.player.distance_to(o.position) <= Player.BODY_RADIUS:
                     self.player.is_alive = False
-                    print("Ouch!")
+                    self.audio_handler.play_game_over_sound(self.player)
                     return
+
                 obstacle_direction = self.player.direction_relative_to_player(relative_polar_coordinate)
                 distance = self.player.distance_to(o.position)
 
@@ -146,9 +144,8 @@ class Game:
 
         """if the player reaches the target, the game ends"""
         dist_to_target = self.player.distance_to(self.level.target)
-        if dist_to_target < Game.COLLISION_DISTANCE:
-            print("Well Done!")
-            self.player.is_alive = False
+        if dist_to_target < Level.TARGET_RADIUS + Player.BODY_RADIUS:
+            self.audio_handler.play_completion_sound(self.player)
 
         if adjust_audio:
             self.audio_handler.set_volume(
@@ -191,5 +188,5 @@ class Game:
 
             self.redraw()
 
-        pygame.quit()
-        sys.exit()
+        while True:
+            pass
