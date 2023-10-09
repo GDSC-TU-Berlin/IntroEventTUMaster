@@ -31,7 +31,6 @@ class Player:
         self.position = position
         self.direction = direction
         self.screen_dimensions = screen_dimensions
-        self.is_alive = True
 
     def turn_right(self):
         self.direction -= Player.TURNING_SPEED
@@ -45,7 +44,7 @@ class Player:
         if self.is_in_screen_bounds(next_position):
             self.position = next_position
 
-    def is_in_screen_bounds(self, position: Position):
+    def is_in_screen_bounds(self, position: Position) -> bool:
         return (
             0 < position.y < self.screen_dimensions[1]
             and 0 < position.x < self.screen_dimensions[0]
@@ -114,5 +113,5 @@ class Player:
         else:
             return Direction.Right
 
-    def distance_to(self, other: Position):
+    def distance_to(self, other: Position) -> float:
         return (self.position - other).length()

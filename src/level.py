@@ -1,5 +1,6 @@
 import random
 from dataclasses import dataclass
+from typing import List
 from math_utils import Position
 from random import shuffle
 from player import Player
@@ -25,15 +26,15 @@ class Cell:
 
 
 class Level:
-    DEFAULT_MAZE_DIMENSIONS = (2, 2)
+    DEFAULT_MAZE_DIMENSIONS = (4, 4)
     TARGET_COLOR = 'gold'
     TARGET_RADIUS = 30
 
     def __init__(self, width=DEFAULT_MAZE_DIMENSIONS[0], height=DEFAULT_MAZE_DIMENSIONS[1]):
         self.width = width
         self.height = height
-        self.grid = []
-        self.obstacles = []
+        self.grid: List[List[Cell]] = []
+        self.obstacles: List[Obstacle] = []
         self.start_position = None
         self.target = None
 
@@ -193,15 +194,15 @@ class Level:
                 self.recursive_dfs(*right_coords)
 
     @staticmethod
-    def get_cell_above(x, y):
+    def get_cell_above(x, y) -> (int, int):
         return (-1, -1) if y == 0 else (x, y - 1)
 
-    def get_cell_below(self, x, y):
+    def get_cell_below(self, x, y) -> (int, int):
         return (-1, -1) if y == self.height - 1 else (x, y + 1)
 
     @staticmethod
-    def get_cell_left_of(x, y):
+    def get_cell_left_of(x, y) -> (int, int):
         return (-1, -1) if x == 0 else (x - 1, y)
 
-    def get_cell_right_of(self, x, y):
+    def get_cell_right_of(self, x, y) -> (int, int):
         return (-1, -1) if x == self.width - 1 else (x + 1, y)

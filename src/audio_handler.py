@@ -52,7 +52,6 @@ class Audio:
         Adjust the direction, from which the sound is coming from
 
         :param panning: closer to 0 means further left, closer to 1 means further right
-        :return:
         """
         self.panning = panning
         self.channel.set_volume(1 - panning, panning)
@@ -105,10 +104,10 @@ class AudioHandler:
         self.right_sound.set_volume(right)
 
     @staticmethod
-    def distance_to_volume(distance, max_distance):
+    def distance_to_volume(distance, max_distance) -> float:
         return (1 - distance / max_distance) * Audio.MAX_VOLUME
 
-    def play_completion_sound(self, player: Player):
+    def play_completion_sound(self):
         self.set_volume(0.0, 0.0, 0.0)
         self.set_target_volume(0.0)
 
@@ -116,9 +115,8 @@ class AudioHandler:
         channel = sound.play()
         while channel.get_busy():
             pass
-        player.is_alive = False
 
-    def play_game_over_sound(self, player: Player):
+    def play_game_over_sound(self):
         self.set_volume(0.0, 0.0, 0.0)
         self.set_target_volume(0.0)
 
@@ -126,7 +124,6 @@ class AudioHandler:
         channel = sound.play()
         while channel.get_busy():
             pass
-        player.is_alive = False
 
 
 def generate_sine_wave(frequency: int) -> np.ndarray:

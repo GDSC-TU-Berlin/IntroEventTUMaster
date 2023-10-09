@@ -13,6 +13,7 @@ class Game:
     BACKGROUND_COLOR = 'black'
     FPS = 60
     TEXT_FONT = ('Mono', 20)
+    STARTING_POS_COLOR = 'red'
 
     def __init__(self):
         self.screen = pygame.display.set_mode((Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT))
@@ -35,6 +36,7 @@ class Game:
             (Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT)
         )
 
+        self.starting_pos = self.player.position
         self.running = True
         self.loop()
 
@@ -43,6 +45,7 @@ class Game:
 
     def redraw(self):
         self.screen.fill(Game.BACKGROUND_COLOR)
+        self.draw_starting_position()
         self.draw_player()
         self.draw_objects()
         self.draw_text()
@@ -92,6 +95,14 @@ class Game:
             (arc_end_world_coordinate.x, arc_end_world_coordinate.y)
         )
 
+    def draw_starting_position(self):
+        pygame.draw.circle(
+            self.screen,
+            Game.STARTING_POS_COLOR,
+            self.starting_pos,
+            Player.BODY_RADIUS
+        )
+
     def draw_objects(self):
         for o in self.level.obstacles:
             pygame.draw.circle(
@@ -122,7 +133,8 @@ class Game:
                 """if the player collides with an obstacle, the game ends"""
                 if self.player.distance_to(o.position) <= Player.BODY_RADIUS:
                     self.player.is_alive = False
-                    self.audio_handler.play_game_over_sound(self.player)
+                    self.audio_handler.play_game_over_sound()
+                    self.running = False
                     return
 
                 obstacle_direction = self.player.direction_relative_to_player(relative_polar_coordinate)
@@ -145,7 +157,9 @@ class Game:
         """if the player reaches the target, the game ends"""
         dist_to_target = self.player.distance_to(self.level.target)
         if dist_to_target < Level.TARGET_RADIUS + Player.BODY_RADIUS:
-            self.audio_handler.play_completion_sound(self.player)
+            self.audio_handler.play_completion_sound()
+            self.running = False
+            return
 
         if adjust_audio:
             self.audio_handler.set_volume(
@@ -171,13 +185,11 @@ class Game:
         adjust_audio_timer = 0
 
         while self.running:
-            if not self.player.is_alive:
-                break
             adjust_audio_timer += clock.tick(Game.FPS)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.running = False
+                    pygame.quit()
 
             if adjust_audio_timer >= AudioHandler.ADJUST_AUDIO_TIMEOUT:
                 self.scan_surroundings(True)
@@ -189,4 +201,6 @@ class Game:
             self.redraw()
 
         while True:
-            pass
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
