@@ -132,7 +132,6 @@ class Game:
 
                 """if the player collides with an obstacle, the game ends"""
                 if self.player.distance_to(o.position) <= Player.BODY_RADIUS:
-                    self.player.is_alive = False
                     self.audio_handler.play_game_over_sound()
                     self.running = False
                     return
